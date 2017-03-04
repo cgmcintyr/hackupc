@@ -14,7 +14,7 @@ import random
 
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
-from tweepy import Stream
+from tweepy import Stream, API
 import json
 
 import tweepy
@@ -32,7 +32,7 @@ class MyStreamListener(StreamListener):
         self.sockets = []
         auth = OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_key, access_secret)
-        self.api = tweepy.API(auth)
+        self.api = API(auth)
         self.stream = Stream(auth, self)
 
     def add_socket(self, ws):
@@ -40,8 +40,7 @@ class MyStreamListener(StreamListener):
 
     def run(self):
         try:
-            #self.stream.filter(locations=bounding['spain'])
-            self.stream.filter(track=['python',])
+            self.stream.filter(locations=bounding['spain'])
         except Exception:
             self.stream.disconnect()
 
@@ -50,28 +49,38 @@ class MyStreamListener(StreamListener):
 
     def send(self, ws, data):
         try:
-            ws.send(data)
+            ws.send(data.encode('utf-8'))
         except Exception:
             # the web socket die..
             self.sockets.remove(ws)
 
-    def on_status(self, status):
-        print("on status: {}".format(status.text))
+
+    def on_data(self, data):
+        print("data")
+        tweet = json.loads(data)
+
+        tweetid = tweet.get('id', None)
+        place = tweet.get('place', None)
+        user = tweet['user']['name'] if tweet.get('user', None) is not None else None
+        text = tweet.get('text', None)
         lang = None
 
         try:
-            lang = detect(status.text)
+            lang = detect(text)
         except LangDetectException:
             pass
 
         if lang in supported_langs.keys():
-            self.status_count += 1
             s = get_sentiment(status.text, supported_langs[lang])
-            h = Tweet(status.id, status.place, status.user, status.text, s)
+            tweet = Tweet(tweetid, place, user, text, s)
+            print(h)
             for ws in self.sockets:
-                gevent.spawn(self.send, ws, json.dumps(h.__dict__))
+                data = json.dumps(h.__dict__).encode('utf-8')
+                gevent.spawn(self.send, ws, data)
         else:
             print("detected lang '{}' is not supported".format(lang))
+
+        return True
 
     def on_error(self, status):
         print("Error {}".format(status))
@@ -87,7 +96,7 @@ def app(environ, start_response):
     ws = environ['wsgi.websocket']
     stream_listener.add_socket(ws)
     while not ws.closed:
-        gevent.sleep(0.1)
+        continue
 
 server = pywsgi.WSGIServer(('', 10000), app, handler_class=WebSocketHandler)
 server.serve_forever()
