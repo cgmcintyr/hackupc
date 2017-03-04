@@ -29,7 +29,6 @@ Tweet = namedtuple('Tweet', ['city', 'latitdue', 'longitude', 'sentiment', 'text
 
 class MyStreamListener(StreamListener):
     def __init__(self, cities, limit):
-        print("Starting MyStreamListener")
         self.status_count = 0
         self.status_stop_count = limit
         self.cities = cities
@@ -44,14 +43,11 @@ class MyStreamListener(StreamListener):
         self.city = random.choice(self.cities)
         self.latitude = self.city.latitude
         self.longitude = self.city.longitude
-        print("Switched to city: {}".format(self.city))
 
     def add_socket(self, ws):
-        print("add socket")
         self.sockets.append(ws)
 
     def run(self):
-        print("Starting stream")
         try:
             self.switch_city()
             self.stream.filter(locations=self.city.bounding)
@@ -61,13 +57,11 @@ class MyStreamListener(StreamListener):
             self.stream.disconnect()
 
     def start(self):
-        print("Spawning gevent")
         gevent.spawn(self.run)
 
-    def send(self, ws, coordinates):
-        print("send")
+    def send(self, ws, data):
         try:
-            ws.send(coordinates.encode('utf-8'))
+            ws.send(data)
         except Exception:
             # the web socket die..
             self.sockets.remove(ws)
@@ -86,9 +80,7 @@ class MyStreamListener(StreamListener):
             s = get_sentiment(status.text, supported_langs[lang])
             h = Tweet(self.city, self.latitude, self.longitude, s, status.text)
             for ws in self.sockets:
-                print("on_status send")
-                data = json.dumps(h.__dict__)
-                gevent.spawn(self.send, ws, data.encode('utf-8'))
+                gevent.spawn(self.send, ws, json.dumps(h.__dict__))
 
         if self.status_count == self.status_stop_count:
             self.status_count = 0
