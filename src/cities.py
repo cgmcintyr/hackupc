@@ -45,7 +45,7 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
 
     return (rad2deg(latMin), rad2deg(lonMin), rad2deg(latMax), rad2deg(lonMax))
 
-boundBoxSize = 10
+boundBoxSize = 100
 
 names = ["madrid", "barcelona", "valencia", "seville", "zaragoza", 
          "málaga", "murcia", "palma", "las palmas de gran canaria", "bilbao"]

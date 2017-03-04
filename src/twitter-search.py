@@ -11,11 +11,10 @@ from langdetect import detect
 from sentiment import get_sentiment
 from cities import cities
 
-config = {}
-execfile("config.py", config)
+import config
 
-auth = tweepy.OAuthHandler(config["consumer_key"], config["consumer_secret"])
-auth.set_access_token(config["access_key"], config["access_secret"])
+auth = tweepy.OAuthHandler(config.consumer_key, config.consumer_secret)
+auth.set_access_token(config.access_key, config.access_secret)
 api = tweepy.API(auth)
 
 supported_langs = {'en':'English', 'es':'Spanish'}
@@ -30,4 +29,4 @@ class MyStreamListener(tweepy.StreamListener):
 
 myStreamListener = MyStreamListener()
 myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
-myStream.filter(locations=cities['barcelona'].bounding)
+myStream.filter(locations=cities['madrid'].bounding)
