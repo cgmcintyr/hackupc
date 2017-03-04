@@ -1,10 +1,12 @@
+# -*- coding: utf-8 -*-
+"""Everything sentiment analysis"""
+
 from __future__ import print_function
 import requests
 import json
 import requests
 
-# tweets = list of tweets to analyze, we need to specify the language as well
-tweets = [["Estoy genial!","Spanish"],["This is a big shit","English"]]
+supported_langs = {'en':'English', 'es':'Spanish'}
 
 headers = {
     'x-api-key': '9CAfxmC4WB10tnS9RY9oG92Io0M4trVp7HpTUEjR',

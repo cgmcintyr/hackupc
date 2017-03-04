@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""City data is kept here"""
 
 from collections import namedtuple
 import math
@@ -43,12 +44,12 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
     lonMin = lon - halfSide/pradius
     lonMax = lon + halfSide/pradius
 
-    return (rad2deg(latMin), rad2deg(lonMin), rad2deg(latMax), rad2deg(lonMax))
+    return (rad2deg(lonMin), rad2deg(latMin), rad2deg(lonMax), rad2deg(latMax))
 
 boundBoxSize = 100
 
 names = ["madrid", "barcelona", "valencia", "seville", "zaragoza", 
-         "málaga", "murcia", "palma", "las palmas de gran canaria", "bilbao"]
+         "málaga", "murcia", "palma", "las palmas de gran canaria", "bilbao", "sydney"]
 
 data  = [City("Madrid", "Madrid", 3255944, 40.417 , -3.703, boundingBox(40.417 , -3.703, boundBoxSize)),
          City("Barcelona", "Catalonia,", 1621537, 41.389, 2.159, boundingBox(41.389, 2.159, boundBoxSize)),
@@ -60,6 +61,8 @@ data  = [City("Madrid", "Madrid", 3255944, 40.417 , -3.703, boundingBox(40.417 ,
          City("Palma", "Balearic Islands", 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
          City("Las Palmas de Gran Canaria", "Canary Islands", 381847, 28.1, -15.413, boundingBox(28.1, -15.413, boundBoxSize)),
          City("Bilbao", "Basque Country", 354860, 43.263, -2.925, boundingBox(43.263, -2.925, boundBoxSize)),
+         City("Sydney", "Australia", 202029, -33.8688, 151.2093, boundingBox(-33.8688, 151.2093, boundBoxSize)),
 ]
 
 cities = dict(zip(names,data))
+print(cities)
