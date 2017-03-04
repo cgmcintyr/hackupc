@@ -46,14 +46,25 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
 
     return (rad2deg(latMin), rad2deg(lonMin), rad2deg(latMax), rad2deg(lonMax))
 
-boundBoxSize = 100
 
-cities = [City("Madrid", "Madrid", 3255944, 40.417 , -3.703, boundingBox(40.417 , -3.703, boundBoxSize)),
-          City("Barcelona", "Catalonia,", 1621537, 41.389, 2.159, boundingBox(41.389, 2.159, boundBoxSize)),
-          City("Valencia", "Valencia,", 814208, 39.47, -0.377, boundingBox(39.47, -0.377, boundBoxSize)),
-          City("Seville", "Andalusia,", 703206, 37.383, -5.973, boundingBox(37.383, -5.973, boundBoxSize)),
-          City("Zaragoza", "Aragon,", 674317, 41.656, -0.877, boundingBox(41.656, -0.877, boundBoxSize)),
-          City("Málaga", "Andalusia", 568305, 36.72, -4.42, boundingBox(36.72, -4.42, boundBoxSize)),
-          City("Murcia", "Murcia,", 436870, 37.987, -1.13, boundingBox(37.987, -1.13, boundBoxSize)),
-          City("Palma", "Balearic Islands", 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
+cities = [City('Madrid', 'Madrid', 3255944, 40.417 , -3.703, boundingBox(40.417 , -3.703, boundBoxSize)),
+          City('Barcelona', 'Catalonia,', 1621537, 41.389, 2.159, boundingBox(41.389, 2.159, boundBoxSize)),
+          City('Valencia', 'Valencia,', 814208, 39.47, -0.377, boundingBox(39.47, -0.377, boundBoxSize)),
+          City('Seville', 'Andalusia,', 703206, 37.383, -5.973, boundingBox(37.383, -5.973, boundBoxSize)),
+          City('Zaragoza', 'Aragon,', 674317, 41.656, -0.877, boundingBox(41.656, -0.877, boundBoxSize)),
+          City('Málaga', 'Andalusia', 568305, 36.72, -4.42, boundingBox(36.72, -4.42, boundBoxSize)),
+          City('Murcia', 'Murcia,', 436870, 37.987, -1.13, boundingBox(37.987, -1.13, boundBoxSize)),
+          City('Palma', 'Balearic Islands', 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
           ]
+
+boundBoxSize = 100
+bounding = {'spain': [-10.06,35.94,3.74,43.76],
+            'madrid': boundingBox(40.417 , -3.703, boundBoxSize),
+            'barcelona': boundingBox(41.389, 2.159, boundBoxSize,
+            'valencia',  boundingBox(39.47, -0.377, boundBoxSize),
+            'seville', boundingBox(37.383, -5.973, boundBoxSize),
+            'zaragoza', boundingBox(41.656, -0.877, boundBoxSize),
+            'malaga', boundingBox(36.72, -4.42, boundBoxSize),
+            'murcia', boundingBox(37.987, -1.13, boundBoxSize),
+            'palma', boundingBox(39.569, 2.65, boundBoxSize),
+            }
