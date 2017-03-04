@@ -1,2 +1,4 @@
 tweepy
+gevent
+gevent-websocket
 langdetect
