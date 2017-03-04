@@ -1,22 +1,9 @@
-'''
-Title           :hackup_python.py
-Description     :This is a sample code for calling two everisMoriarty 
-				services that do language detection and sentiment analysis.
-				These services were specifically prepared for HackUPC 2017
-				event, and will stop running on 05/03/2017 at 11pm.
-Author          :Adil Moujahid <mohammed.adil.sa@everis.com>
-Date Created    :20170224
-Date Modified   :20170301
-version         :0.4
-usage           :python make_predictions_2.py
-python_version  :2.7.11
-'''
-
 from __future__ import print_function
 import requests
 import json
 import requests
 
+# tweets = list of tweets to analyze, we need to specify the language as well
 tweets = [["Estoy genial!","Spanish"],["This is a big shit","English"]]
 
 headers = {
