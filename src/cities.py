@@ -44,7 +44,7 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
     lonMin = lon - halfSide/pradius
     lonMax = lon + halfSide/pradius
 
-    return (rad2deg(latMin), rad2deg(lonMin), rad2deg(latMax), rad2deg(lonMax))
+    return (rad2deg(lonMin), rad2deg(latMin), rad2deg(lonMax), rad2deg(latMax))
 
 boundBoxSize = 100
 
@@ -58,6 +58,7 @@ cities = [City('Madrid', 'Madrid', 3255944, 40.417 , -3.703, boundingBox(40.417 
           City('Palma', 'Balearic Islands', 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
           ]
 
+# Make sure these are long,lat pairs!
 bounding = {'spain': [-10.06,35.94,3.74,43.76],
             'madrid': boundingBox(40.417 , -3.703, boundBoxSize),
             'barcelona': boundingBox(41.389, 2.159, boundBoxSize),
