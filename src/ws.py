@@ -25,7 +25,7 @@ from cities import bounding
 from config import *
 from sentiment import get_sentiment, supported_langs
 
-Tweet = namedtuple('Tweet', ['city', 'latitdue', 'longitude', 'sentiment', 'text'])
+Tweet = namedtuple('Tweet', ['id', 'place', 'user', 'text', 'sentiment'])
 
 class MyStreamListener(StreamListener):
     def __init__(self):
@@ -40,7 +40,8 @@ class MyStreamListener(StreamListener):
 
     def run(self):
         try:
-            self.stream.filter(locations=bounding['spain'])
+            #self.stream.filter(locations=bounding['spain'])
+            self.stream.filter(track=['python',])
         except Exception:
             self.stream.disconnect()
 
@@ -66,14 +67,7 @@ class MyStreamListener(StreamListener):
         if lang in supported_langs.keys():
             self.status_count += 1
             s = get_sentiment(status.text, supported_langs[lang])
-
-            longitude = None
-            latitude = None
-            if status.coordinates:
-                longitude = status.coordinates[0]
-                latitude = status.coordinates[1]
-
-            h = Tweet(self.city, self.latitude, self.longitude, s, status.text)
+            h = Tweet(status.id, status.place, status.user, status.text, s)
             for ws in self.sockets:
                 gevent.spawn(self.send, ws, json.dumps(h.__dict__))
 
