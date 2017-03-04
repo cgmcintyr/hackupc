@@ -28,7 +28,7 @@ from sentiment import get_sentiment, supported_langs
 Tweet = namedtuple('Tweet', ['city', 'latitdue', 'longitude', 'sentiment', 'text'])
 
 class MyStreamListener(StreamListener):
-    def __init__(self, cities, limit):
+    def __init__(self):
         self.sockets = []
         auth = OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_key, access_secret)
@@ -55,6 +55,7 @@ class MyStreamListener(StreamListener):
             self.sockets.remove(ws)
 
     def on_status(self, status):
+        print("on status")
         lang = None
 
         try:
@@ -66,16 +67,15 @@ class MyStreamListener(StreamListener):
             self.status_count += 1
             s = get_sentiment(status.text, supported_langs[lang])
 
-            if status.coordinates
+            longitude = None
+            latitude = None
+            if status.coordinates:
+                longitude = status.coordinates[0]
+                latitude = status.coordinates[1]
 
             h = Tweet(self.city, self.latitude, self.longitude, s, status.text)
             for ws in self.sockets:
                 gevent.spawn(self.send, ws, json.dumps(h.__dict__))
-
-        if self.status_count == self.status_stop_count:
-            self.status_count = 0
-            self.stream.disconnect()
-            self.run()
 
     def on_error(self, status):
         print("Error {}".format(status))
@@ -84,11 +84,11 @@ class MyStreamListener(StreamListener):
         print("tweepy timeout.. wait 30 seconds")
         gevent.sleep(30)
 
-stream_listener = MyStreamListener(cities, 3)
+stream_listener = MyStreamListener()
 stream_listener.start()
 
 def app(environ, start_response):
-    ws = environ['wsgi.websocket'.encode('utf-8')]
+    ws = environ['wsgi.websocket']
     stream_listener.add_socket(ws)
     while not ws.closed:
         gevent.sleep(0.1)
