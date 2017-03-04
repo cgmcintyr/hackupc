@@ -44,25 +44,16 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
     lonMin = lon - halfSide/pradius
     lonMax = lon + halfSide/pradius
 
-    return (rad2deg(lonMin), rad2deg(latMin), rad2deg(lonMax), rad2deg(latMax))
+    return (rad2deg(latMin), rad2deg(lonMin), rad2deg(latMax), rad2deg(lonMax))
 
 boundBoxSize = 100
 
-names = ["madrid", "barcelona", "valencia", "seville", "zaragoza", 
-         "málaga", "murcia", "palma", "las palmas de gran canaria", "bilbao", "sydney"]
-
-data  = [City("Madrid", "Madrid", 3255944, 40.417 , -3.703, boundingBox(40.417 , -3.703, boundBoxSize)),
-         City("Barcelona", "Catalonia,", 1621537, 41.389, 2.159, boundingBox(41.389, 2.159, boundBoxSize)),
-         City("Valencia", "Valencia,", 814208, 39.47, -0.377, boundingBox(39.47, -0.377, boundBoxSize)),
-         City("Seville", "Andalusia,", 703206, 37.383, -5.973, boundingBox(37.383, -5.973, boundBoxSize)),
-         City("Zaragoza", "Aragon,", 674317, 41.656, -0.877, boundingBox(41.656, -0.877, boundBoxSize)),
-         City("Málaga", "Andalusia", 568305, 36.72, -4.42, boundingBox(36.72, -4.42, boundBoxSize)),
-         City("Murcia", "Murcia,", 436870, 37.987, -1.13, boundingBox(37.987, -1.13, boundBoxSize)),
-         City("Palma", "Balearic Islands", 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
-         City("Las Palmas de Gran Canaria", "Canary Islands", 381847, 28.1, -15.413, boundingBox(28.1, -15.413, boundBoxSize)),
-         City("Bilbao", "Basque Country", 354860, 43.263, -2.925, boundingBox(43.263, -2.925, boundBoxSize)),
-         City("Sydney", "Australia", 202029, -33.8688, 151.2093, boundingBox(-33.8688, 151.2093, boundBoxSize)),
-]
-
-cities = dict(zip(names,data))
-print(cities)
+cities = [City("Madrid", "Madrid", 3255944, 40.417 , -3.703, boundingBox(40.417 , -3.703, boundBoxSize)),
+          City("Barcelona", "Catalonia,", 1621537, 41.389, 2.159, boundingBox(41.389, 2.159, boundBoxSize)),
+          City("Valencia", "Valencia,", 814208, 39.47, -0.377, boundingBox(39.47, -0.377, boundBoxSize)),
+          City("Seville", "Andalusia,", 703206, 37.383, -5.973, boundingBox(37.383, -5.973, boundBoxSize)),
+          City("Zaragoza", "Aragon,", 674317, 41.656, -0.877, boundingBox(41.656, -0.877, boundBoxSize)),
+          City("Málaga", "Andalusia", 568305, 36.72, -4.42, boundingBox(36.72, -4.42, boundBoxSize)),
+          City("Murcia", "Murcia,", 436870, 37.987, -1.13, boundingBox(37.987, -1.13, boundBoxSize)),
+          City("Palma", "Balearic Islands", 401270, 39.569, 2.65, boundingBox(39.569, 2.65, boundBoxSize)),
+          ]

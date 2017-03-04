@@ -14,14 +14,15 @@ auth = tweepy.OAuthHandler(config.consumer_key, config.consumer_secret)
 auth.set_access_token(config.access_key, config.access_secret)
 api = tweepy.API(auth)
 
-HappyMapTweet = namedtuple('HappyMapTweet', 
+EmojiMapTweet = namedtuple('HappyMapTweet', 
                            ['city', 'latitdue', 'longitude', 'sentiment', 'text'])
 
 def this_method_should_do_something(data):
     print(data)
 
 class CityStreamListener(tweepy.StreamListener):
-    def __init__(self, city, limit):
+    def __init__(self, city, limit, *args, **kwargs):
+        tweepy.StreamListener.__init__(self, *args, **kwargs)
         self.city = city.name
         self.latitude = city.latitude
         self.longitude = city.longitude
@@ -48,7 +49,7 @@ class CityStreamListener(tweepy.StreamListener):
 
 while True:
     for _, city in cities.items():
-        print(city)
+        print(city.name)
         myStreamListener = CityStreamListener(city, 3)
         myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
         myStream.filter(locations=city.bounding)
