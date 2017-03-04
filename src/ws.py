@@ -21,7 +21,7 @@ import tweepy
 from langdetect import detect
 from collections import namedtuple
 
-from cities import cities
+from cities import bounding
 from config import *
 from sentiment import get_sentiment, supported_langs
 
@@ -29,31 +29,19 @@ Tweet = namedtuple('Tweet', ['city', 'latitdue', 'longitude', 'sentiment', 'text
 
 class MyStreamListener(StreamListener):
     def __init__(self, cities, limit):
-        self.status_count = 0
-        self.status_stop_count = limit
-        self.cities = cities
-
         self.sockets = []
         auth = OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_key, access_secret)
         self.api = tweepy.API(auth)
         self.stream = Stream(auth, self)
 
-    def switch_city(self):
-        self.city = random.choice(self.cities)
-        self.latitude = self.city.latitude
-        self.longitude = self.city.longitude
-
     def add_socket(self, ws):
         self.sockets.append(ws)
 
     def run(self):
         try:
-            self.switch_city()
-            self.stream.filter(locations=self.city.bounding)
+            self.stream.filter(locations=bounding['spain'])
         except Exception:
-            print(traceback.format_exc())
-            print(sys.exc_info()[0])
             self.stream.disconnect()
 
     def start(self):
@@ -67,7 +55,6 @@ class MyStreamListener(StreamListener):
             self.sockets.remove(ws)
 
     def on_status(self, status):
-        print("on_status")
         lang = None
 
         try:
@@ -78,6 +65,9 @@ class MyStreamListener(StreamListener):
         if lang in supported_langs.keys():
             self.status_count += 1
             s = get_sentiment(status.text, supported_langs[lang])
+
+            if status.coordinates
+
             h = Tweet(self.city, self.latitude, self.longitude, s, status.text)
             for ws in self.sockets:
                 gevent.spawn(self.send, ws, json.dumps(h.__dict__))
