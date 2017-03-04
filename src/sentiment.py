@@ -22,6 +22,3 @@ def get_sentiment(text_in, language='English'):
     r = requests.post('https://jmlk74oovf.execute-api.eu-west-1.amazonaws.com/dev/sentiment?wait=true', headers=headers, data=json.dumps(data))
     content = r.json()
     return content['results']['prediction']
-
-for i in range(2):
-	print(get_sentiment(tweets[i][0],tweets[i][1]))
