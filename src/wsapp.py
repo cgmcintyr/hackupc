@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import tornado.httpserver
 import tornado.websocket
 import tornado.ioloop
@@ -17,9 +18,9 @@ from langdetect.lang_detect_exception import LangDetectException
 from config import *
 from cities import bounding
 from sentiment import get_sentiment, supported_langs
+from location import get_province_code
 
-Tweet = namedtuple('Tweet', ['id', 'place', 'user', 'text', 'sentiment'])
-
+Tweet = namedtuple('Tweet', ['id', 'cod_prov', 'coordinates', 'user', 'text', 'sentiment'])
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     connections = []
@@ -46,12 +47,19 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
         print("data")
         tweet = json.loads(data)
 
+        # Location data
+        coordinates = tweet['coordinates']['coordinates'] if tweet.get('coordinates', None) is not None else None
+        if not coordinates: return True
+        cod_prov = get_province_code(coordinates[0], coordinates[1])
+        if not cod_prov: return True
+
+        # Tweet data
         tweetid = tweet.get('id', None)
-        place = tweet.get('place', None)
         user = tweet['user']['name'] if tweet.get('user', None) is not None else None
         text = tweet.get('text', None)
-        lang = None
 
+        # Detect language
+        lang = None
         try:
             lang = detect(text)
         except LangDetectException:
@@ -59,7 +67,7 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
 
         if lang in supported_langs.keys():
             s = get_sentiment(text, supported_langs[lang])
-            tweet = Tweet(tweetid, place, user, text, s)
+            tweet = Tweet(tweetid, cod_prov, coordinates, user, text, s)
             print(tweet)
             for connection in WSHandler.connections:
                 data = json.dumps(tweet.__dict__).encode('utf-8')
@@ -97,4 +105,7 @@ if __name__ == "__main__":
         (r'/(favicon.ico)', tornado.web.StaticFileHandler, {'path': 'favicon.ico'}) # path to your icon
     ])
     application.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        tornado.ioloop.IOLoop.instance().start()
+    except KeyboardInterrupt:
+        tornado.ioloop.IOLoop.instance().stop()
