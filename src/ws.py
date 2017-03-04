@@ -56,7 +56,7 @@ class MyStreamListener(StreamListener):
             self.sockets.remove(ws)
 
     def on_status(self, status):
-        print("on status")
+        print("on status: {}".format(status.text))
         lang = None
 
         try:
@@ -70,6 +70,8 @@ class MyStreamListener(StreamListener):
             h = Tweet(status.id, status.place, status.user, status.text, s)
             for ws in self.sockets:
                 gevent.spawn(self.send, ws, json.dumps(h.__dict__))
+        else:
+            print("detected lang '{}' is not supported".format(lang))
 
     def on_error(self, status):
         print("Error {}".format(status))
