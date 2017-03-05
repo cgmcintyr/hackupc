@@ -92,7 +92,12 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
 
 
 def OpenSpainStream(stream):
-    stream.filter(locations=bounding['spain'])
+    while True:
+        try:
+            stream.filter(locations=bounding['spain'])
+        except:
+            continue
+
 
 def RunTornadoIOLoop(ioloop):
     ioloop.start()
