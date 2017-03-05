@@ -5,6 +5,7 @@ import tornado.ioloop
 import tornado.web
 from datetime import timedelta
 import json
+import time
 import tweepy
 from tweepy import OAuthHandler
 import threading
@@ -80,7 +81,7 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
     # limit handling
     def on_limit(self, status):
         print 'Limit threshold exceeded', status
-    
+
     def on_timeout(self, status):
         print 'Stream disconnected; continuing...'  
 
@@ -90,22 +91,40 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
             return False
 
 
-def OpenStream():
+def OpenSpainStream(stream):
+    stream.filter(locations=bounding['spain'])
+
+def RunTornadoIOLoop(ioloop):
+    ioloop.start()
+
+if __name__ == "__main__":
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_key, access_secret)
     api = tweepy.API(auth)
+
     stream = tweepy.Stream(auth, MyStreamListener()) 
-    stream.filter(locations=bounding['spain'])
+    twitter_thread = threading.Thread(target=OpenSpainStream, args=(stream,))
 
+    tornado_instance = tornado.ioloop.IOLoop.instance()
+    tornado_thread = threading.Thread(target=RunTornadoIOLoop, args=(tornado_instance,))
 
-if __name__ == "__main__":
-    threading.Thread(target=OpenStream).start()
     application = tornado.web.Application([
         (r'/ws', WSHandler),
         (r'/(favicon.ico)', tornado.web.StaticFileHandler, {'path': 'favicon.ico'}) # path to your icon
     ])
     application.listen(8888)
+
+    twitter_thread.start()
+    tornado_thread.start()
+
     try:
-        tornado.ioloop.IOLoop.instance().start()
+        while 1:
+            time.sleep(.1)
     except KeyboardInterrupt:
-        tornado.ioloop.IOLoop.instance().stop()
+        tornado_instance.stop()
+        stream.disconnect()
+
+        twitter_thread.join()
+        tornado_thread.join()
+
+        print("Exiting")
