@@ -122,9 +122,11 @@ if __name__ == "__main__":
             time.sleep(.1)
     except KeyboardInterrupt:
         tornado_instance.stop()
-        stream.disconnect()
+        stream.running = False
 
         twitter_thread.join()
         tornado_thread.join()
+
+        stream.disconnect()
 
         print("Exiting")
