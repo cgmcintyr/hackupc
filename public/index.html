@@ -164,18 +164,17 @@
                 // console.log('map data loaded from json');
 
                 axios.get('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/spain-provinces.geojson')
-                  .then(function (response) {
-                      let memes = response.data.features;
-                      memes.forEach(function(feature) {
-                              var province = map.data.getFeatureById(feature.properties.cod_prov)
-                              province.setProperty('happiness', 0);
-                      });
-                  })
-                  .catch(function (error) {
-                    console.log(error);
-                  });
-
-                //   updateCensusData();
+                    .then(function(response) {
+                        let memes = response.data.features;
+                        memes.forEach(function(feature) {
+                            var province = map.data.getFeatureById(feature.properties.cod_prov)
+                            province.setProperty('happiness', 0);
+                            province.setProperty('province_name', feature.properties.name);
+                        });
+                    })
+                    .catch(function(error) {
+                        console.error(error);
+                    });
             });
         }
 
@@ -185,29 +184,42 @@
          * @param {string} variable
          */
         function updateCensusData(tweet) {
-            var province = map.data.getFeatureById(tweet.cod_prov);
+            let province = map.data.getFeatureById(tweet.cod_prov);
             let new_val = province.getProperty('happiness');
-            switch(tweet.sentiment) {
+            switch (tweet.sentiment) {
                 case "positive":
                     new_val += 1;
-                    if (new_val > censusMax) {
-                        censusMax++;
-                    }
                     console.log("+");
                     break;
                 case "negative":
                     new_val += -1;
-                    if (new_val < censusMin) {
-                        censusMin--;
-                    }
                     console.log("-");
                     break;
                 default:
                     new_val += 0;
                     console.log("0");
             }
-            console.log(tweet)
+            if (new_val > censusMax || new_val < censusMin) {
+                expand_scale();
+            }
+            console.log(tweet);
             province.setProperty('happiness', new_val);
+            document.getElementById('census-min').textContent =
+                censusMin;
+            document.getElementById('census-max').textContent =
+                censusMax;
+            reload_data_properties();
+        }
+
+        function reload_data_properties() {
+            map.data.forEach(function(province) {
+                province.setProperty('happiness', province.getProperty('happiness'));
+            });
+        }
+
+        function expand_scale() {
+            censusMax++;
+            censusMin--;
         }
 
         /**
@@ -269,7 +281,7 @@
 
             // update the label
             document.getElementById('data-label').textContent =
-                e.feature.getProperty('');
+                e.feature.getProperty('province_name');
             document.getElementById('data-value').textContent =
                 e.feature.getProperty('happiness');
             document.getElementById('data-box').style.display = 'block';
@@ -315,7 +327,6 @@
 
             // Handle messages sent by the server.
             socket.onmessage = function(event) {
-                // console.log(event)
                 updateCensusData(JSON.parse(event.data));
             };
 
