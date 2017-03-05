@@ -19,9 +19,9 @@ from langdetect.lang_detect_exception import LangDetectException
 from config import *
 from cities import bounding
 from sentiment import get_sentiment, supported_langs
-from location import get_province_code
+from location import get_province_data
 
-Tweet = namedtuple('Tweet', ['id', 'cod_prov', 'coordinates', 'user', 'text', 'sentiment'])
+Tweet = namedtuple('Tweet', ['id', 'province', 'cod_prov', 'coordinates', 'user', 'text', 'sentiment'])
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     connections = []
@@ -51,7 +51,7 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
         # Location data
         coordinates = tweet['coordinates']['coordinates'] if tweet.get('coordinates', None) is not None else None
         if not coordinates: return True
-        cod_prov = get_province_code(coordinates[0], coordinates[1])
+        province, cod_prov = get_province_data(coordinates[0], coordinates[1])
         if not cod_prov: return True
 
         # Tweet data
@@ -68,7 +68,7 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
 
         if lang in supported_langs.keys():
             s = get_sentiment(text, supported_langs[lang])
-            tweet = Tweet(tweetid, cod_prov, coordinates, user, text, s)
+            tweet = Tweet(tweetid, province, cod_prov, coordinates, user, text, s)
             print(tweet)
             for connection in WSHandler.connections:
                 data = json.dumps(tweet.__dict__).encode('utf-8')
