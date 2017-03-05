@@ -10,6 +10,7 @@ import tweepy
 from tweepy import OAuthHandler
 import threading
 from collections import namedtuple
+import random
 
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
@@ -50,9 +51,10 @@ class MyStreamListener(tweepy.StreamListener, WSHandler):
 
         # Location data
         coordinates = tweet['coordinates']['coordinates'] if tweet.get('coordinates', None) is not None else None
-        if not coordinates: return True
-        cod_prov = get_province_code(coordinates[0], coordinates[1])
-        if not cod_prov: return True
+        if coordinates:
+            cod_prov = get_province_code(coordinates[0], coordinates[1])
+        else:
+            cod_prov = random.randint(0,50)
 
         # Tweet data
         tweetid = tweet.get('id', None)

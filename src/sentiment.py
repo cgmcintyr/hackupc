@@ -5,6 +5,7 @@ from __future__ import print_function
 import requests
 import json
 import requests
+import random
 
 supported_langs = {'en':'English', 'es':'Spanish'}
 
@@ -23,4 +24,11 @@ def get_sentiment(text_in, language='English'):
     data = {"textIn": text_in,  "language": language}
     r = requests.post('https://jmlk74oovf.execute-api.eu-west-1.amazonaws.com/dev/sentiment?wait=true', headers=headers, data=json.dumps(data))
     content = r.json()
-    return content['results']['prediction']
+    prediction = content['results']['prediction']
+
+    if prediction == 'neutral' and random.random() > 0.33:
+        prediction = 'positive'
+    else:
+        prediction = 'negative'
+
+    return prediction
